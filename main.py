@@ -30,7 +30,7 @@ def add_watermark(img, text="Guanqr  Photography", opacity=0.85):
     watermark_layer = Image.new("RGBA", img.size, (0, 0, 0, 0))
     draw = ImageDraw.Draw(watermark_layer)
 
-    font_size = 28
+    font_size = 32
 
     try:
         # Windows/Mac/Linux 通用的专业英文字体
@@ -50,7 +50,7 @@ def add_watermark(img, text="Guanqr  Photography", opacity=0.85):
 
     # 底部居中位置
     x = (img.width - w) // 2
-    y = img.height - h - 15
+    y = img.height - h - 20
 
 
     # 检测底部明暗，自动选颜色
@@ -69,7 +69,7 @@ def add_watermark(img, text="Guanqr  Photography", opacity=0.85):
 
     return img.convert("RGB")
 
-def process_image(input_path, output_path, target_long_side=1500, max_size_kb=200):
+def process_image(input_path, output_path, target_long_side=1920, max_size_kb=200):
     try:
         with Image.open(input_path) as img:
             img = img.convert('RGB')
