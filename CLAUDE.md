@@ -11,6 +11,7 @@ main.py                  # 入口 + batch_process() 调度逻辑
 exif_utils.py            # get_exif_info(), get_year()
 toml_utils.py            # parse_toml_entries(), write_toml()
 watermark.py             # get_region_brightness(), add_watermark(), process_image()
+oss_utils.py             # create_bucket_from_config(), sync_new_photos()
 ```
 ```
 
@@ -43,7 +44,7 @@ watermark.py             # get_region_brightness(), add_watermark(), process_ima
 
 这是最简单的增量策略，不需要哈希缓存文件。
 
-### 6. 字体独立下载脚本
+### 7. 字体独立下载脚本
 字体文件不提交到 Git 仓库。提供 `download_font.py` 从 Google Fonts 自动下载：
 - 请求 `https://fonts.google.com/download?family=Noto+Sans`（返回 ZIP）
 - 在 ZIP 中查找匹配 `*Bold*.ttf` 的文件
@@ -51,13 +52,20 @@ watermark.py             # get_region_brightness(), add_watermark(), process_ima
 
 使用 `download_font.py` 而非 shell 脚本的好处：跨平台，且与主程序共享 Python 生态。
 
+### 8. TOML 按时间排序
+`write_toml()` 按 `time` 字段升序重写整个文件，而非简单追加。`parse_toml_entries()` 完整保留所有手动编辑字段，新增照片插入到正确的时间位置。
+
+### 9. OSS 凭证独立配置文件
+`oss_config.json` 独立于代码仓库（已 gitignore），通过 `oss_config.example.json` 提供模板。`create_bucket_from_config()` 优先读配置文件，回退到环境变量。
+
 ## 依赖
 
 ```
 Pillow  # PIL: Image, ImageDraw, ImageFont, ExifTags
+oss2    # 阿里云 OSS SDK（可选，仅上传时需要）
 ```
 
-标准库：`os`, `sys`, `io.BytesIO`, `urllib.request`, `zipfile`
+标准库：`os`, `sys`, `io.BytesIO`, `urllib.request`, `zipfile`, `json`, `re`, `fractions`
 
 ## 目录结构约定
 
@@ -65,9 +73,11 @@ Pillow  # PIL: Image, ImageDraw, ImageFont, ExifTags
 项目根目录/
 ├── main.py              # 入口与调度
 ├── exif_utils.py        # EXIF 提取
-├── toml_utils.py        # TOML 读写排序
-├── watermark.py         # 水印与图片处理
-├── download_font.py     # 字体下载（clone 后运行）
+├── toml_utils.py            # TOML 读写排序
+├── watermark.py             # 水印与图片处理
+├── oss_utils.py             # OSS 上传工具
+├── download_font.py         # 字体下载（clone 后运行）
+├── oss_config.example.json  # OSS 凭证模板
 ├── fonts/               # 字体目录（gitignore）
 │   └── NotoSans-Bold.ttf
 ├── original_photos/     # 原始照片（gitignore）

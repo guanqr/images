@@ -14,6 +14,7 @@ if sys.platform.startswith("win"):
 from exif_utils import get_exif_info
 from toml_utils import parse_toml_entries, write_toml
 from watermark import process_image
+from oss_utils import create_bucket_from_config, sync_new_photos
 
 
 def batch_process(input_dir, output_dir, toml_path=None):
@@ -83,3 +84,10 @@ if __name__ == "__main__":
     print("===== 开始处理 =====")
     batch_process(INPUT_FOLDER, OUTPUT_FOLDER, toml_path=TOML_PATH)
     print("===== 全部完成 =====")
+
+    # 同步新图片到 OSS
+    bucket = create_bucket_from_config()
+    if bucket:
+        print("===== 开始上传 OSS =====")
+        sync_new_photos(OUTPUT_FOLDER, bucket)
+        print("===== OSS 上传完成 =====")

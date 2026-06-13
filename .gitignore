@@ -2,3 +2,4 @@ original_photos/
 fonts/
 __pycache__/
 *.pyc
+oss_config.json
