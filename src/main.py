@@ -75,7 +75,7 @@ def batch_process(input_dir, output_dir, toml_path=None):
     print(f"📊 本次处理 {processed} 张，跳过 {skipped} 张（未变化）")
 
 
-if __name__ == "__main__":
+def run():
     BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
     INPUT_FOLDER = os.path.join(BASE_DIR, "original_photos")
     OUTPUT_FOLDER = os.path.join(BASE_DIR, "output_photos")
@@ -91,3 +91,7 @@ if __name__ == "__main__":
         print("===== 开始上传 OSS =====")
         sync_new_photos(OUTPUT_FOLDER, bucket)
         print("===== OSS 上传完成 =====")
+
+
+if __name__ == "__main__":
+    run()
