@@ -1,2 +1,4 @@
 original_photos/
 fonts/
+__pycache__/
+*.pyc
