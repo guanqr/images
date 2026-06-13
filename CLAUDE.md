@@ -17,7 +17,6 @@ src/
 scripts/
 └── download_font.py     # Google Fonts 字体下载
 ```
-```
 
 ## 关键设计决策
 
