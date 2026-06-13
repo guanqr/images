@@ -7,11 +7,15 @@
 ## 核心架构
 
 ```
-main.py                  # 入口 + batch_process() 调度逻辑
-exif_utils.py            # get_exif_info(), get_year()
-toml_utils.py            # parse_toml_entries(), write_toml()
-watermark.py             # get_region_brightness(), add_watermark(), process_image()
-oss_utils.py             # create_bucket_from_config(), sync_new_photos()
+run.py                   # 根目录入口
+src/
+├── main.py              # 入口 + batch_process() 调度逻辑
+├── exif_utils.py        # get_exif_info(), get_year()
+├── toml_utils.py        # parse_toml_entries(), write_toml()
+├── watermark.py         # get_region_brightness(), add_watermark(), process_image()
+└── oss_utils.py         # create_bucket_from_config(), sync_new_photos()
+scripts/
+└── download_font.py     # Google Fonts 字体下载
 ```
 ```
 
@@ -71,18 +75,21 @@ oss2    # 阿里云 OSS SDK（可选，仅上传时需要）
 
 ```
 项目根目录/
-├── main.py              # 入口与调度
-├── exif_utils.py        # EXIF 提取
-├── toml_utils.py            # TOML 读写排序
-├── watermark.py             # 水印与图片处理
-├── oss_utils.py             # OSS 上传工具
-├── download_font.py         # 字体下载（clone 后运行）
+├── run.py                   # 入口（python run.py）
+├── src/                     # 源代码
+│   ├── main.py              # 入口与调度
+│   ├── exif_utils.py        # EXIF 提取
+│   ├── toml_utils.py        # TOML 读写排序
+│   ├── watermark.py         # 水印与图片处理
+│   └── oss_utils.py         # OSS 上传工具
+├── scripts/                 # 辅助脚本
+│   └── download_font.py     # 字体下载
 ├── oss_config.example.json  # OSS 凭证模板
-├── fonts/               # 字体目录（gitignore）
+├── fonts/                   # 字体目录（gitignore）
 │   └── NotoSans-Bold.ttf
-├── original_photos/     # 原始照片（gitignore）
-├── output_photos/       # 处理后输出（gitignore，自动创建）
-├── photo.toml           # 照片元数据
+├── original_photos/         # 原始照片（gitignore）
+├── output_photos/           # 处理后输出（gitignore，自动创建）
+├── photo.toml               # 照片元数据
 ├── .gitignore
 └── README.md
 ```

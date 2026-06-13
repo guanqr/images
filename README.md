@@ -6,18 +6,21 @@
 
 ```
 项目根目录/
-├── main.py              # 入口与调度
-├── exif_utils.py        # EXIF 信息提取
-├── toml_utils.py        # photo.toml 读写排序
-├── watermark.py             # 水印与图片处理
-├── oss_utils.py             # OSS 上传工具
-├── download_font.py         # 字体下载脚本
-├── fonts/                   # 字体目录（自动下载）
+├── run.py                  # 入口（python run.py）
+├── src/                    # 源代码
+│   ├── main.py             # 调度逻辑
+│   ├── exif_utils.py       # EXIF 提取
+│   ├── toml_utils.py       # TOML 读写
+│   ├── watermark.py        # 水印与处理
+│   └── oss_utils.py        # OSS 上传
+├── scripts/                # 辅助脚本
+│   └── download_font.py    # 字体下载
+├── fonts/                  # 字体目录（自动下载）
 │   └── NotoSans-Bold.ttf
-├── original_photos/         # 原始照片（放这里）
-├── output_photos/           # 处理后照片（自动生成）
-├── photo.toml               # 照片元数据（自动补全）
-├── oss_config.example.json  # OSS 凭证模板
+├── original_photos/        # 原始照片（放这里）
+├── output_photos/          # 处理后照片（自动生成）
+├── photo.toml              # 照片元数据（自动补全）
+├── oss_config.example.json # OSS 凭证模板
 ├── .gitignore
 └── README.md
 ```
@@ -29,7 +32,7 @@
 
 ```bash
 pip install Pillow oss2
-python download_font.py
+python scripts/download_font.py
 ```
 
 3. （可选）配置阿里云 OSS 环境变量，用于自动同步图片到云端（详见下方）
@@ -38,7 +41,7 @@ python download_font.py
 ## 使用方法
 
 ```bash
-python main.py
+python run.py
 ```
 
 ## 阿里云 OSS 同步（可选）

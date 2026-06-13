@@ -76,7 +76,7 @@ def batch_process(input_dir, output_dir, toml_path=None):
 
 
 if __name__ == "__main__":
-    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
     INPUT_FOLDER = os.path.join(BASE_DIR, "original_photos")
     OUTPUT_FOLDER = os.path.join(BASE_DIR, "output_photos")
     TOML_PATH = os.path.join(BASE_DIR, "photo.toml")

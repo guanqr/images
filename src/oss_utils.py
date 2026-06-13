@@ -49,7 +49,7 @@ def create_bucket_from_config():
     import json
     import oss2
 
-    config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "oss_config.json")
+    config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "oss_config.json")
 
     credentials = {}
     if os.path.exists(config_path):

@@ -6,7 +6,7 @@ import urllib.request
 import zipfile
 from io import BytesIO
 
-FONTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fonts")
+FONTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "fonts")
 FONT_FILE = "NotoSans-Bold.ttf"
 
 

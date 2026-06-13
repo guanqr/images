@@ -26,7 +26,7 @@ def add_watermark(img, text="Guanqr Photography", opacity=0.6, photo_year=""):
 
     font_size = 24
 
-    font_path = os.path.join(os.path.dirname(__file__), "fonts", "NotoSans-Bold.ttf")
+    font_path = os.path.join(os.path.dirname(__file__), "..", "fonts", "NotoSans-Bold.ttf")
     try:
         font = ImageFont.truetype(font_path, font_size)
     except Exception:
