@@ -1,5 +1,16 @@
 # 更新日志
 
+## v0.7.1 (2026-06-13)
+
+### 修复
+- **OSS 增量上传修复**：`sync_new_photos()` 改为基于实际处理文件列表判断上传，而非时间戳比较。`batch_process()` 返回本次处理过的文件名，传入 `sync_new_photos()` 的 `force_files` 参数，仅这些文件上传覆盖，其余跳过。
+
+### 变更
+- `batch_process()` — 返回 `processed_files` 列表
+- `sync_new_photos()` — 新增 `force_files` 参数，替代不可靠的 mtime vs OSS last_modified 时间戳比较
+
+---
+
 ## v0.7.0 (2026-06-13)
 
 ### 变更

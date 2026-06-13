@@ -10,13 +10,19 @@ def upload_to_oss(local_path, object_name, bucket):
     return f"https://{bucket.bucket_name}.{bucket.endpoint.replace('https://', '')}/{object_name}"
 
 
-def sync_new_photos(output_dir, bucket, oss_prefix="images/photos/"):
+def sync_new_photos(output_dir, bucket, oss_prefix="images/photos/", force_files=None):
     """
-    将 output_dir 中的新图片上传到 OSS。
-    通过 OSS 上已有文件列表判断是否需要上传（避免重复覆盖）。
+    将 output_dir 中的图片上传到 OSS。
+
+    上传策略：
+    - force_files 中的文件（本次实际处理过的）始终上传覆盖
+    - 不在 force_files 中但 OSS 上不存在的文件也会上传（首次上传）
+    - 其他文件跳过（未变化）
     """
     if not os.path.exists(output_dir):
         return
+
+    force_set = set(force_files) if force_files else set()
 
     # 获取 OSS 上已有文件集合
     existing = set()
@@ -32,16 +38,18 @@ def sync_new_photos(output_dir, bucket, oss_prefix="images/photos/"):
         object_name = oss_prefix + f
         local_path = os.path.join(output_dir, f)
 
-        if object_name in existing:
+        # 跳过未变化的文件（不在 force_set 中且 OSS 上已存在）
+        if f not in force_set and object_name in existing:
             skipped += 1
             continue
 
         url = upload_to_oss(local_path, object_name, bucket)
-        print(f"☁️  已上传：{f}  →  {url}")
+        status = "🔄 已更新" if object_name in existing else "☁️  已上传"
+        print(f"{status}：{f}  →  {url}")
         uploaded += 1
 
     if uploaded or skipped:
-        print(f"☁️  OSS 上传 {uploaded} 张，跳过 {skipped} 张（已存在）")
+        print(f"☁️  OSS 上传 {uploaded} 张，跳过 {skipped} 张（未变化）")
 
 
 def create_bucket_from_config():

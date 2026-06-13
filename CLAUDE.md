@@ -9,11 +9,11 @@
 ```
 run.py                   # 根目录入口
 src/
-├── main.py              # 入口 + batch_process() 调度逻辑
+├── main.py              # 入口 + batch_process() 调度逻辑，返回已处理文件列表
 ├── exif_utils.py        # get_exif_info(), get_year()
 ├── toml_utils.py        # parse_toml_entries(), write_toml()
 ├── watermark.py         # get_region_brightness(), add_watermark(), process_image()
-└── oss_utils.py         # create_bucket_from_config(), sync_new_photos()
+└── oss_utils.py         # create_bucket_from_config(), sync_new_photos(force_files)
 scripts/
 └── download_font.py     # Google Fonts 字体下载
 ```
@@ -60,6 +60,14 @@ scripts/
 
 ### 9. OSS 凭证独立配置文件
 `oss_config.json` 独立于代码仓库（已 gitignore），通过 `oss_config.example.json` 提供模板。`create_bucket_from_config()` 优先读配置文件，回退到环境变量。
+
+### 10. OSS 增量上传（避免重复工作）
+`batch_process()` 返回本次实际处理过的文件名列表（`processed_files`），传给 `sync_new_photos()` 的 `force_files` 参数：
+- 在 `force_files` 中的文件 → 始终上传覆盖 OSS 同名对象
+- 不在 `force_files` 中但 OSS 上不存在 → 上传（兜底首次上传）
+- 不在 `force_files` 中且 OSS 上已存在 → 跳过
+
+这比时间戳比较（本地 mtime vs OSS last_modified）更可靠，因为本地和云端的时间基准可能不一致。
 
 ## 依赖
 

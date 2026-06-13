@@ -90,7 +90,7 @@ copy oss_config.example.json oss_config.json
 > Endpoint 根据 Bucket 所在地域填写，如 `oss-cn-shanghai`、`oss-cn-beijing` 等。
 > `oss_config.json` 已加入 `.gitignore`，不会被上传到 GitHub。
 
-配置后，每次运行 `python main.py` 会自动将新图片上传到 OSS，上传路径为 `images/photos/<文件名>`，已存在的文件自动跳过。
+配置后，每次运行 `python run.py` 会自动将本次处理过的图片上传到 OSS（覆盖同名文件），上传路径为 `images/photos/<文件名>`，未变化的图片自动跳过。
 
 ## 处理内容
 
@@ -111,4 +111,4 @@ copy oss_config.example.json oss_config.json
 
 ## 增量处理
 
-只处理新增或发生变化的照片，未变化的自动跳过，避免重复工作。
+只处理新增或发生变化的照片，未变化的自动跳过，避免重复工作。OSS 同步同样增量：只上传本次实际处理过的照片（覆盖云端同名文件），其余跳过。

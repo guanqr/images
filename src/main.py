@@ -28,6 +28,7 @@ def batch_process(input_dir, output_dir, toml_path=None):
 
     skipped = 0
     processed = 0
+    processed_files = []  # 记录本次实际处理的文件名
     for f in sorted(os.listdir(input_dir)):
         if not f.lower().endswith((".jpg", ".jpeg")):
             continue
@@ -48,6 +49,7 @@ def batch_process(input_dir, output_dir, toml_path=None):
                 photo_year = exif_info.get("time", "")[:4]
                 print(f"✅ 处理完成：{f}  {photo_year if photo_year else ''}")
                 processed += 1
+                processed_files.append(f)
             except Exception as e:
                 print(f"❌ 处理失败：{f}  {e}")
         else:
@@ -73,6 +75,7 @@ def batch_process(input_dir, output_dir, toml_path=None):
         write_toml(toml_path, list(src_to_entry.values()))
 
     print(f"📊 本次处理 {processed} 张，跳过 {skipped} 张（未变化）")
+    return processed_files
 
 
 def run():
@@ -82,14 +85,14 @@ def run():
     TOML_PATH = os.path.join(BASE_DIR, "photo.toml")
 
     print("===== 开始处理 =====")
-    batch_process(INPUT_FOLDER, OUTPUT_FOLDER, toml_path=TOML_PATH)
+    processed_files = batch_process(INPUT_FOLDER, OUTPUT_FOLDER, toml_path=TOML_PATH)
     print("===== 全部完成 =====")
 
     # 同步新图片到 OSS
     bucket = create_bucket_from_config()
     if bucket:
         print("===== 开始上传 OSS =====")
-        sync_new_photos(OUTPUT_FOLDER, bucket)
+        sync_new_photos(OUTPUT_FOLDER, bucket, force_files=processed_files)
         print("===== OSS 上传完成 =====")
 
 
