@@ -108,6 +108,7 @@ copy oss_config.example.json oss_config.json
 |------|------|
 | focus / iso / aperture / shutter / time | EXIF 自动提取 |
 | alt / category / place / location / description | 留空，手动填写 |
+| series / is_cover | 不自动生成，手动添加后保留 |
 
 ## 增量处理
 

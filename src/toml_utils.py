@@ -22,6 +22,11 @@ def parse_toml_entries(toml_path):
             m = re.match(r'^(\w+)\s*=\s*"([^"]*)"', line)
             if m:
                 entry[m.group(1)] = m.group(2)
+            else:
+                # 匹配非引号值：布尔值（true/false）或数字
+                m = re.match(r'^(\w+)\s*=\s*(true|false|\d+(?:\.\d+)?)', line)
+                if m:
+                    entry[m.group(1)] = m.group(2)
         if entry:
             entries.append(entry)
 
@@ -50,6 +55,10 @@ def write_toml(toml_path, entries):
             lines.append(f'{f} = "{entry.get(f, "")}"')
         if entry.get("description"):
             lines.append(f'description = "{entry["description"]}"')
+        if entry.get("series"):
+            lines.append(f'series = "{entry["series"]}"')
+        if entry.get("is_cover") == "true":
+            lines.append(f'is_cover = {entry["is_cover"]}')
 
     lines.append("")
 

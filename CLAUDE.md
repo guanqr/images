@@ -36,6 +36,7 @@ scripts/
 处理每张照片时，检查其 `src` 是否已存在于 TOML 中。不存在则追加新 `[[photo]]` 条目：
 - EXIF 字段（focus, iso, aperture, shutter, time）自动填入
 - 手动编辑字段（alt, category, place, location）留空，等待用户自行填写
+- `series` 和 `is_cover` 不自动生成；若用户手动添加，`write_toml()` 保留不覆盖（`series` 有值才写，`is_cover` 仅在为 `true` 时写出）
 - 用正则 `^src\s*=\s*"(.+)"` 快速解析已有条目，无需第三方 TOML 库
 - `src` 路径约定为 `/images/photos/<filename>`，与前端路由对齐
 
