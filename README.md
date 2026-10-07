@@ -108,7 +108,8 @@ copy oss_config.example.json oss_config.json
 | 字段 | 来源 |
 |------|------|
 | focus / iso / aperture / shutter / time | EXIF 自动提取 |
-| camera / lens / width / height | 自动提取（width/height 为处理前原始像素尺寸） |
+| camera / lens | EXIF 自动提取 |
+| width / height | 处理后图片尺寸（从 output_photos 读取） |
 | alt / category / place / location / description | 留空，手动填写 |
 | series / is_cover / featured | 不自动生成，手动添加后保留 |
 

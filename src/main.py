@@ -19,6 +19,15 @@ from watermark import process_image
 from oss_utils import create_bucket_from_config, sync_new_photos
 
 
+def _get_image_size(path):
+    """读取图片像素宽高（字符串），失败返回空字符串"""
+    try:
+        with Image.open(path) as img:
+            return str(img.size[0]), str(img.size[1])
+    except Exception:
+        return "", ""
+
+
 def batch_process(input_dir, output_dir, toml_path=None):
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
@@ -27,17 +36,11 @@ def batch_process(input_dir, output_dir, toml_path=None):
     if toml_path:
         for entry in parse_toml_entries(toml_path):
             src_to_entry[entry["src"]] = entry
-        # 回填历史条目的宽高（此前未记录）：从 output_photos 读取像素尺寸
+        # 宽高始终以处理后的输出图为准（覆盖历史记录中可能存在的原始尺寸）
         for src, entry in src_to_entry.items():
-            if not entry.get("width") or not entry.get("height"):
-                img_path = os.path.join(output_dir, os.path.basename(src))
-                if os.path.exists(img_path):
-                    try:
-                        with Image.open(img_path) as img:
-                            entry["width"] = str(img.size[0])
-                            entry["height"] = str(img.size[1])
-                    except Exception:
-                        pass
+            img_path = os.path.join(output_dir, os.path.basename(src))
+            if os.path.exists(img_path):
+                entry["width"], entry["height"] = _get_image_size(img_path)
 
     skipped = 0
     processed = 0
@@ -71,6 +74,10 @@ def batch_process(input_dir, output_dir, toml_path=None):
         if toml_path:
             src = f"/images/photos/{f}"
             if src not in src_to_entry:
+                # 宽高取处理后输出图的尺寸；处理失败输出不存在时留空，下次运行由回填逻辑补上
+                width, height = "", ""
+                if os.path.exists(output_path):
+                    width, height = _get_image_size(output_path)
                 src_to_entry[src] = {
                     "src": src,
                     "alt": "",
@@ -82,8 +89,8 @@ def batch_process(input_dir, output_dir, toml_path=None):
                     "time": exif_info["time"],
                     "place": "",
                     "location": "",
-                    "width": exif_info["width"],
-                    "height": exif_info["height"],
+                    "width": width,
+                    "height": height,
                     "camera": exif_info.get("camera", ""),
                     "lens": exif_info.get("lens", ""),
                 }

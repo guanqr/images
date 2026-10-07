@@ -50,6 +50,22 @@ lens = ""
 featured = true
 
 [[photo]]
+src = "/images/photos/群鸭逐波.jpg"
+alt = "群鴨逐波"
+category = "animal"
+focus = "14"
+iso = "50"
+aperture = "3.4"
+shutter = "1/200"
+time = "2021-05-30"
+place = "杭州曲院風荷"
+location = "浙江"
+width = "1920"
+height = "1280"
+camera = "HUAWEI EBG-AN00"
+lens = ""
+
+[[photo]]
 src = "/images/photos/鼓浪屿.jpg"
 alt = "鼓浪嶼"
 category = "scenery"
@@ -1102,6 +1118,7 @@ width = "1920"
 height = "1279"
 camera = "NIKON Z 8"
 lens = "TAMRON 150-500mm F/5-6.7 Di III VC VXD A057Z"
+series = "烏蘭布統的秋"
 featured = true
 
 [[photo]]
@@ -1119,6 +1136,7 @@ width = "1920"
 height = "1279"
 camera = "NIKON Z 8"
 lens = "TAMRON 150-500mm F/5-6.7 Di III VC VXD A057Z"
+series = "烏蘭布統的秋"
 
 [[photo]]
 src = "/images/photos/风拂白鬃.jpg"
@@ -1135,6 +1153,7 @@ width = "1920"
 height = "1280"
 camera = "NIKON Z 8"
 lens = "TAMRON 150-500mm F/5-6.7 Di III VC VXD A057Z"
+series = "烏蘭布統的秋"
 
 [[photo]]
 src = "/images/photos/踏浪驰风.jpg"
@@ -1151,6 +1170,7 @@ width = "1920"
 height = "1279"
 camera = "NIKON Z 8"
 lens = "TAMRON 150-500mm F/5-6.7 Di III VC VXD A057Z"
+series = "烏蘭布統的秋"
 
 [[photo]]
 src = "/images/photos/萨岭河畔.jpg"
@@ -1167,6 +1187,8 @@ width = "1920"
 height = "1280"
 camera = "NIKON Z 8"
 lens = "NIKKOR Z 24-200mm f/4-6.3 VR"
+series = "烏蘭布統的秋"
+is_cover = true
 
 [[photo]]
 src = "/images/photos/透风沟的秋色.jpg"
@@ -1183,6 +1205,7 @@ width = "1920"
 height = "1279"
 camera = "NIKON Z 8"
 lens = "NIKKOR Z 24-200mm f/4-6.3 VR"
+series = "烏蘭布統的秋"
 
 [[photo]]
 src = "/images/photos/天光倾泻.jpg"
@@ -1199,6 +1222,7 @@ width = "1920"
 height = "1280"
 camera = "NIKON Z 8"
 lens = "NIKKOR Z 24-200mm f/4-6.3 VR"
+series = "烏蘭布統的秋"
 
 [[photo]]
 src = "/images/photos/山坡上的摄影人.jpg"
@@ -1215,3 +1239,4 @@ width = "1920"
 height = "1280"
 camera = "NIKON Z 8"
 lens = "NIKKOR Z 24-200mm f/4-6.3 VR"
+series = "烏蘭布統的秋"

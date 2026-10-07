@@ -14,7 +14,7 @@ def _clean(value):
 
 
 def get_exif_info(image_path):
-    """从 EXIF 中提取：focus, iso, aperture, shutter, time, camera, lens；并记录原始像素宽高"""
+    """从 EXIF 中提取：focus, iso, aperture, shutter, time, camera, lens（宽高由 main.py 从处理后输出图读取）"""
     info = {
         "focus": "",
         "iso": "",
@@ -23,14 +23,9 @@ def get_exif_info(image_path):
         "time": "",
         "camera": "",
         "lens": "",
-        "width": "",
-        "height": "",
     }
     try:
         img = Image.open(image_path)
-        # 原始像素尺寸（raw 数据，仅记录；构图方向由站点模板从宽高推导，脚本不做判定）
-        info["width"] = str(img.size[0])
-        info["height"] = str(img.size[1])
         exif_data = img._getexif()
         if not exif_data:
             return info
