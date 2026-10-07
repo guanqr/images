@@ -1,5 +1,22 @@
 # 更新日志
 
+## v0.8.0 (2026-10-07)
+
+### 新增
+- `exif_utils.py` — EXIF 提取扩展：新增 `camera`（Model 优先，缺品牌补 Make）、`lens`（LensModel/LensMake）、原始像素 `width`/`height`
+- `backfill_camera_lens.py` — 一次性回填脚本，从原始照片读取相机/镜头信息写入 `photo.toml`，不做图片处理与 OSS 上传
+- `toml_utils.py` — 支持 `featured` 精选字段（仅 `true` 时写出）
+
+### 变更
+- `exif_utils.py` / `toml_utils.py` — 读写两侧清洗控制字符（EXIF 可能携带末尾 NUL 等，否则生成非法 TOML）
+- `toml_utils.py` — FIELDS 扩展 `width`/`height`/`camera`/`lens`
+- `main.py` — 新条目自动填入 `camera`/`lens`/`width`/`height`；历史条目缺宽高时从 output_photos 读取像素尺寸回填
+- `photo.toml` — 74 条历史记录回填相机/镜头/宽高，17 条添加 `featured` 标记，新增 27 张照片
+- 分类重命名：`landscape`/`city`/`countryside` 统一为 `scenery`
+- `output_photos/` — 新增 37 张处理结果，14 张重新生成
+
+---
+
 ## v0.7.2 (2026-06-15)
 
 ### 新增

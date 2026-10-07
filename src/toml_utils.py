@@ -3,6 +3,13 @@
 import os
 import re
 
+_CONTROL_RE = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]")
+
+
+def _clean(value):
+    """写 TOML 前去除字符串中的控制字符（EXIF 可能携带末尾 NUL 等，否则 TOML 解析失败）"""
+    return _CONTROL_RE.sub("", value)
+
 
 def parse_toml_entries(toml_path):
     """解析 TOML，返回条目列表 [{src, alt, category, ...}]"""
@@ -43,7 +50,8 @@ def write_toml(toml_path, entries):
 
     FIELDS = [
         "src", "alt", "category", "focus", "iso",
-        "aperture", "shutter", "time", "place", "location",
+        "aperture", "shutter", "time", "place", "location", "width", "height",
+        "camera", "lens",
     ]
 
     lines = []
@@ -52,13 +60,15 @@ def write_toml(toml_path, entries):
             lines.append("")
         lines.append("[[photo]]")
         for f in FIELDS:
-            lines.append(f'{f} = "{entry.get(f, "")}"')
+            lines.append(f'{f} = "{_clean(entry.get(f, ""))}"')
         if entry.get("description"):
-            lines.append(f'description = "{entry["description"]}"')
+            lines.append(f'description = "{_clean(entry["description"])}"')
         if entry.get("series"):
-            lines.append(f'series = "{entry["series"]}"')
+            lines.append(f'series = "{_clean(entry["series"])}"')
         if entry.get("is_cover") == "true":
             lines.append(f'is_cover = {entry["is_cover"]}')
+        if entry.get("featured") == "true":
+            lines.append('featured = true')
 
     lines.append("")
 

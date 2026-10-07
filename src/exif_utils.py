@@ -1,25 +1,41 @@
 # -*- coding: utf-8 -*-
 """EXIF 信息提取"""
+import re
 from PIL import Image
 from PIL.ExifTags import TAGS
 from fractions import Fraction
 
+_CONTROL_RE = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]")
+
+
+def _clean(value):
+    """去除 EXIF 字符串中可能携带的控制字符（如末尾 NUL），保证写入 TOML 合法"""
+    return _CONTROL_RE.sub("", str(value)).strip()
+
 
 def get_exif_info(image_path):
-    """从 EXIF 中提取：focus, iso, aperture, shutter, time"""
+    """从 EXIF 中提取：focus, iso, aperture, shutter, time, camera, lens；并记录原始像素宽高"""
     info = {
         "focus": "",
         "iso": "",
         "aperture": "",
         "shutter": "",
         "time": "",
+        "camera": "",
+        "lens": "",
+        "width": "",
+        "height": "",
     }
     try:
         img = Image.open(image_path)
+        # 原始像素尺寸（raw 数据，仅记录；构图方向由站点模板从宽高推导，脚本不做判定）
+        info["width"] = str(img.size[0])
+        info["height"] = str(img.size[1])
         exif_data = img._getexif()
         if not exif_data:
             return info
 
+        make = ""
         for tag_id, value in exif_data.items():
             tag = TAGS.get(tag_id, tag_id)
             try:
@@ -46,6 +62,17 @@ def get_exif_info(image_path):
                 elif tag == "DateTime" and not info["time"]:
                     if value and len(str(value)) >= 10:
                         info["time"] = str(value)[:10].replace(":", "-")
+                elif tag == "Make":
+                    make = _clean(value)
+                elif tag == "Model":
+                    model = _clean(value)
+                    # 相机：优先用 Model（通常已含品牌）；Model 缺品牌时补 Make
+                    if model:
+                        info["camera"] = model if make and make.split()[0].lower() in model.lower() else f"{make} {model}".strip()
+                elif tag_id in (42036,):  # LensModel（PIL 旧版本 TAGS 未收录）
+                    info["lens"] = _clean(value)
+                elif tag == "LensMake" and not info["lens"]:
+                    info["lens"] = _clean(value)
             except Exception:
                 pass
     except Exception:

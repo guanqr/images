@@ -11,6 +11,8 @@ if sys.platform.startswith("win"):
     except Exception:
         pass
 
+from PIL import Image
+
 from exif_utils import get_exif_info
 from toml_utils import parse_toml_entries, write_toml
 from watermark import process_image
@@ -25,6 +27,17 @@ def batch_process(input_dir, output_dir, toml_path=None):
     if toml_path:
         for entry in parse_toml_entries(toml_path):
             src_to_entry[entry["src"]] = entry
+        # 回填历史条目的宽高（此前未记录）：从 output_photos 读取像素尺寸
+        for src, entry in src_to_entry.items():
+            if not entry.get("width") or not entry.get("height"):
+                img_path = os.path.join(output_dir, os.path.basename(src))
+                if os.path.exists(img_path):
+                    try:
+                        with Image.open(img_path) as img:
+                            entry["width"] = str(img.size[0])
+                            entry["height"] = str(img.size[1])
+                    except Exception:
+                        pass
 
     skipped = 0
     processed = 0
@@ -69,6 +82,10 @@ def batch_process(input_dir, output_dir, toml_path=None):
                     "time": exif_info["time"],
                     "place": "",
                     "location": "",
+                    "width": exif_info["width"],
+                    "height": exif_info["height"],
+                    "camera": exif_info.get("camera", ""),
+                    "lens": exif_info.get("lens", ""),
                 }
 
     if toml_path:

@@ -7,6 +7,7 @@
 ```
 项目根目录/
 ├── run.py                  # 入口（python run.py）
+├── backfill_camera_lens.py # 一次性回填相机/镜头（历史数据迁移）
 ├── src/                    # 源代码
 │   ├── main.py             # 调度逻辑
 │   ├── exif_utils.py       # EXIF 提取
@@ -107,8 +108,19 @@ copy oss_config.example.json oss_config.json
 | 字段 | 来源 |
 |------|------|
 | focus / iso / aperture / shutter / time | EXIF 自动提取 |
+| camera / lens / width / height | 自动提取（width/height 为处理前原始像素尺寸） |
 | alt / category / place / location / description | 留空，手动填写 |
-| series / is_cover | 不自动生成，手动添加后保留 |
+| series / is_cover / featured | 不自动生成，手动添加后保留 |
+
+## 历史数据回填（一次性）
+
+旧版本未记录相机/镜头信息时，可运行：
+
+```bash
+python backfill_camera_lens.py original_photos photo.toml
+```
+
+脚本只读取 EXIF 并更新 `photo.toml` 的 `camera`/`lens` 字段，不处理图片、不上传 OSS。历史条目缺失的 `width`/`height` 会在下次运行 `python run.py` 时自动回填。
 
 ## 增量处理
 

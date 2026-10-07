@@ -8,6 +8,7 @@
 
 ```
 run.py                   # 根目录入口
+backfill_camera_lens.py  # 一次性回填：从原始图 EXIF 读相机/镜头写入 photo.toml
 src/
 ├── main.py              # 入口 + batch_process() 调度逻辑，返回已处理文件列表
 ├── exif_utils.py        # get_exif_info(), get_year()
@@ -34,9 +35,10 @@ scripts/
 
 ### 5. 自动更新 photo.toml
 处理每张照片时，检查其 `src` 是否已存在于 TOML 中。不存在则追加新 `[[photo]]` 条目：
-- EXIF 字段（focus, iso, aperture, shutter, time）自动填入
+- EXIF 字段（focus, iso, aperture, shutter, time, camera, lens）自动填入，`width`/`height` 记录处理前原始像素尺寸
 - 手动编辑字段（alt, category, place, location）留空，等待用户自行填写
-- `series` 和 `is_cover` 不自动生成；若用户手动添加，`write_toml()` 保留不覆盖（`series` 有值才写，`is_cover` 仅在为 `true` 时写出）
+- `series`、`is_cover`、`featured` 不自动生成；若用户手动添加，`write_toml()` 保留不覆盖（`series` 有值才写，`is_cover`/`featured` 仅在为 `true` 时写出）
+- 历史条目缺 `width`/`height` 时，`batch_process()` 从 output_photos 读取像素尺寸回填
 - 用正则 `^src\s*=\s*"(.+)"` 快速解析已有条目，无需第三方 TOML 库
 - `src` 路径约定为 `/images/photos/<filename>`，与前端路由对齐
 
@@ -70,6 +72,9 @@ scripts/
 
 这比时间戳比较（本地 mtime vs OSS last_modified）更可靠，因为本地和云端的时间基准可能不一致。
 
+### 11. EXIF 扩展字段与控制字符清洗
+`get_exif_info()` 新增提取 `camera`（优先 Model，缺品牌时补 Make）、`lens`（LensModel，旧版 Pillow 未收录该 TAG 时用 tag_id 42036）、原始像素 `width`/`height`（仅记录，不做构图方向判定）。EXIF 字符串可能携带控制字符（如末尾 NUL），`exif_utils._clean()` 与 `toml_utils._clean()` 在读写两侧清洗，避免生成非法 TOML。
+
 ## 依赖
 
 ```
@@ -84,6 +89,7 @@ oss2    # 阿里云 OSS SDK（可选，仅上传时需要）
 ```
 项目根目录/
 ├── run.py                   # 入口（python run.py）
+├── backfill_camera_lens.py  # 一次性回填相机/镜头（历史数据迁移）
 ├── src/                     # 源代码
 │   ├── main.py              # 入口与调度
 │   ├── exif_utils.py        # EXIF 提取
